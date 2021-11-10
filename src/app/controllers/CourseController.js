@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const { mongooseToObject } = require('../../util/mongoose');
+const { render } = require('node-sass');
 
 class CourseController {
     // [GET] /courses/:slug
@@ -56,6 +57,19 @@ class CourseController {
         Course.restore({ _id: req.params.id})
             .then(() => res.redirect('back'))
             .catch(next);
+    }
+    // [POST] /course/handle-form-actions
+    handleFormActions(req, res, next){
+        switch (req.body.action) {
+            case 'delete':
+                Course.delete({ _id: { $in: req.body.courseIds }})
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+        
+            default:
+                res.json({message: 'Action is invalid'})
+        }
     }
 }
 
