@@ -14,16 +14,25 @@
             <option value="delete">Xóa</option>
         </select>
 
-        <button class="btn btn-primary btn-sm check-all-submit-btn disabled">Thực hiện</button>
+        <button class="btn btn-primary btn-sm check-all-submit-btn" disabled>Thực hiện</button>
     </div>
     <table class="table mt-4">
         <thead>
             <tr>
                 <th></th>
                 <th scope="col">STT</th>
-                <th scope="col">Tên khóa học</th>
-                <th scope="col">Trình độ</th>
-                <th scope="col">Thời gian tạo</th>
+                <th scope="col">
+                    Tên khóa học
+                    {{{sortable 'name' _sort}}}
+                </th>
+                <th scope="col">
+                    Trình độ
+                    {{{sortable 'level' _sort}}}
+                </th>
+                <th scope="col">
+                    Thời gian tạo
+                    {{{sortable 'createdAt' _sort}}}
+                </th>
                 <th scope="col"></th>
             </tr>
         </thead>
@@ -83,7 +92,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         var courseId;
         var deleteForm = document.forms['delete-course-form'];
-        var containerForm = document.forms['container-form'];
+        //var containerForm = document.forms['container-form'];
+        var containerForm = $('form[name="container-form"]');
         var btnDeleteCourse = document.getElementById('btn-delete-course');
         var checkboxAll = $('#checkbox-all');
         var courseItemCheckbox = $('input[name="courseIds[]"]');
@@ -94,7 +104,6 @@
             var button = $(event.relatedTarget);
             courseId = button.data('id');
         });
-        
         
         btnDeleteCourse.onclick = function () {                                                          
             deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
@@ -112,21 +121,15 @@
             checkboxAll.prop('checked', isCheckedAll);
             renderCheckAllSubmitBtn();
         });
-        //checkbox all submit button clicked
-        checkAllSubmitBtn.on('submit', function (e) {
-            var isSubmitable = !$(this).hasClass('disabled');
-            if (!isSubmitable) {
-                e.preventDefault();
-            }
-        });
+        //checkbox all submit button clicked 
 
         //enale when checked
         function renderCheckAllSubmitBtn(){
             var checkedCount = $('input[name="courseIds[]"]:checked').length;
             if (checkedCount > 0){
-                checkAllSubmitBtn.removeClass('disabled');
+                checkAllSubmitBtn.attr('disabled', false);
             } else {
-                checkAllSubmitBtn.addClass('disabled');
+                checkAllSubmitBtn.attr('disabled', true);
             }
         }
     });
